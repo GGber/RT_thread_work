@@ -22,22 +22,27 @@ static rt_err_t uart_input(rt_device_t dev, rt_size_t size)
     return RT_EOK;
 }
 
-static void serial_thread_entry(void *parameter)
+static char Serial_232_Get_char()
 {
     char ch;
+    /* 从串口读取一个字节的数据，没有读取到则等待接收信号量 */
+    while (rt_device_read(serial_RS232, -1, &ch, 1) != 1)
+    {
+        /* 阻塞等待接收信号量，等到信号量后再次读取数据 */
+        rt_sem_take(&rx_sem, RT_WAITING_FOREVER);
+    }
+    return ch;
+}
+static void serial_thread_entry(void *parameter)
+{
+   char ch;
 
     while (1)
     {
-
-        /* 从串口读取一个字节的数据，没有读取到则等待接收信号量 */
-        while (rt_device_read(serial_RS232, -1, &ch, 1) != 1)
-        {
-            /* 阻塞等待接收信号量，等到信号量后再次读取数据 */
-            rt_sem_take(&rx_sem, RT_WAITING_FOREVER);
-        }
+        ch=Serial_232_Get_char();
         /* 读取到的数据通过串口错位输出 （需要修改的地方）*/
 //        ch = ch + 1;
-//        rt_device_write(serial, 0, &ch, 1);
+        rt_device_write(serial_RS232, 0, &ch, 1);
     }
 }
 

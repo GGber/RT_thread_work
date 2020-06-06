@@ -21,6 +21,9 @@
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
+/********************AD时钟测试频率配置宏定义***********************/
+#define AD_TEST_CLK_PIN   GET_PIN(B, 6)
+
 /********************线程配置宏定义***********************/
 #define ADC7367_stack_size   1024
 #define ADC7367_priority     13

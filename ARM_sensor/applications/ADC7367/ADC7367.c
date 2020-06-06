@@ -81,6 +81,8 @@ static void ADC7367_thread_entry(void *parameter)
 {
     int AD_A_data_Int=0;
 
+    rt_pin_mode(AD_TEST_CLK_PIN, PIN_MODE_OUTPUT);
+
     rt_pin_mode(ADC7367_OUTA_PIN, PIN_MODE_INPUT_PULLDOWN);     //下拉输入
     rt_pin_mode(ADC7367_OUTB_PIN, PIN_MODE_INPUT_PULLDOWN);
     rt_pin_mode(ADC7367_BUSY_PIN, PIN_MODE_INPUT_PULLDOWN);
@@ -108,40 +110,42 @@ static void ADC7367_thread_entry(void *parameter)
         switch (Conversion_sta) {
 
             case Conversion_free:
+                rt_pin_write(AD_TEST_CLK_PIN, PIN_LOW);//ad频率测试引脚
+
                 rt_timer_start(timer1);  //重启定时器
-                LOG_I("ADC start conversion！\n");
+//                LOG_I("ADC start conversion！\n");
                 ADC7367_conversion();   //转换一次数据
                 break;
 
             case Conversion_out:
-                LOG_W("ADC conversion out time！,number:%d\n",time1_outnum);
+//                LOG_W("ADC conversion out time！,number:%d\n",time1_outnum);
                 Conversion_sta=Conversion_free;
                 break;
 
             case Conversion_end:            //数据转换结束，开始读数据
-                LOG_I("ADC conversion over!\n");
+//                LOG_I("ADC conversion over!\n");
                 ADC7367_read_data();
 
                 if(AD_data_A&0x2000)    //判断正负电压
                 {
                     AD_A_data_Int=((~AD_data_A)&0x1FFF)*AD_k;   //负数就取补码
-                    LOG_I("Data A(V): -%d V\n",AD_A_data_Int);
-                    usSRegInBuf[3]= AD_A_data_Int | 0x8000;
+//                    LOG_I("Data A(V): -%d V\n",AD_A_data_Int);
+                    usSRegInBuf[3]= AD_A_data_Int&0xFFFF | 0x8000;
                 }else {
                     AD_A_data_Int=(AD_data_A&0x1FFF)*AD_k;
-                    LOG_I("Data A(V): +%d V\n",AD_A_data_Int);
-                    usSRegInBuf[3]= AD_A_data_Int;
+//                    LOG_I("Data A(V): +%d V\n",AD_A_data_Int);
+                    usSRegInBuf[3]= AD_A_data_Int&0xFFFF;
                 }
 
 //                LOG_I("Data A(V): %04x V\n",AD_data_A);
 //                LOG_I("Data B(I): %04x A\n",AD_data_B);
                 time1_outnum=0;                   //定时器 超时次数清0
                 Conversion_sta=Conversion_free;
-                rt_thread_mdelay(1000);
-                break;
 
-            default:
+                rt_pin_write(AD_TEST_CLK_PIN, PIN_HIGH);//ad频率测试引脚
 
+//                rt_thread_mdelay(1000);
+//                rt_hw_us_delay(100);
                 break;
         }
 

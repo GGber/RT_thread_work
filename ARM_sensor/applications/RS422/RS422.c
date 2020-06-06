@@ -20,9 +20,9 @@ static void Key_Init()
 
 }
 
-static UCHAR Read_key()
+static int Read_key()
 {
-    UCHAR Key_num=0;
+    int Key_num=0;
     if (rt_pin_read(KEY_PIN_1) == PIN_LOW)
         Key_num |= 1 << 0;
     if (rt_pin_read(KEY_PIN_2) == PIN_LOW)
@@ -43,13 +43,13 @@ static void mb_slave_poll(void *parameter)
 
     Key_Init();
 
-    UCHAR Addr_m=Read_key();
-    eMBInit(MB_RTU, SLAVE_ADDR, PORT_NUM, PORT_BAUDRATE, PORT_PARITY);
+    int Addr_m=Read_key();
+    eMBInit(MB_RTU, Addr_m, PORT_NUM, PORT_BAUDRATE, PORT_PARITY);
     eMBEnable();
 
     while (1)
     {
-//        rt_kprintf("按键的值为：%d！\n",Read_key());
+        rt_kprintf("按键的值为：%d！\n",Read_key());
         eMBPoll();
         rt_thread_mdelay(MB_POLL_CYCLE_MS);
     }

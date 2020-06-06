@@ -14,7 +14,7 @@
 #define Conversion_now      0x02   //正在转换
 #define Conversion_free     0x01   //空闲状态
 #define Conversion_end      0x04   //转换结束
-#define Time_AD_out         1000   //超时的次数
+#define Time_AD_out         10   //超时的次数
 /* 定时器的控制块 */
 rt_timer_t timer1;
 int time1_outnum=0;                 //定义超时的次数变量
