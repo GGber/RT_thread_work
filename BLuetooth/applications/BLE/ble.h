@@ -33,7 +33,8 @@
 #define STA_DIS     0
 
 /******定义接收到的功能码******/
-#define BLE_CODE_TIME    0x01       //设置签到时间
+#define BLE_CODE_TIME       0x01       //设置签到时间
+#define BLE_CODE_BEEP_EN    0x02       //设置蜂鸣器使能
 
  /* 用于接收消息的数组 */
 extern unsigned char BLE_RX_Buffer_A[MAX_BUFF_LEN];//签到数组

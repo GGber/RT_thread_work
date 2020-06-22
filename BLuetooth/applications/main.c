@@ -11,7 +11,6 @@
 #include <rtthread.h>
 #include <board.h>
 #include <rtdevice.h>
-#include "beep.h"
 #include "oled.h"
 #include "ble.h"
 
@@ -31,11 +30,7 @@ int main(void)
     /* set LED0 pin mode to output */
     rt_pin_mode(LED0_PIN, PIN_MODE_OUTPUT);
 
-    Beep_Init();                // 初始化蜂鸣器
-
     OLED_Init();                //OLED初始化
-
-//    BLE_PIN_Init();
 
     while (1)
     {

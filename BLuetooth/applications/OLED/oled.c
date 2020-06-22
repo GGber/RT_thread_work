@@ -48,16 +48,20 @@ void OLED_Show_str()
     sprintf(Oled_str, "Time : %d",Sign_time_run);  //Time
     u8g2_DrawStr(&u8g2, 1, 45, Oled_str);
 
+
+    switch(Sign_sta)
+    {
+
+        case SIGN_STA_SHOW_CLOSE: break;
+        case SIGN_STA_SIGN_START: u8g2_DrawStr(&u8g2, 70, 50, "START"); break;
+        case SIGN_STA_SET_OK:     u8g2_DrawStr(&u8g2, 70, 50, "S_OK");  break;
+        case SIGN_STA_SET_ERROR:  u8g2_DrawStr(&u8g2, 70, 50, "S_ERR"); break;
+
+        default:break;
+    }
+
     if(Sign_sta)
     {
-        switch(Sign_sta)
-        {
-            case SIGN_STA_SIGN_START: u8g2_DrawStr(&u8g2, 70, 50, "START"); break;
-            case SIGN_STA_SET_OK:     u8g2_DrawStr(&u8g2, 70, 50, "S_OK");  break;
-            case SIGN_STA_SET_ERROR:  u8g2_DrawStr(&u8g2, 70, 50, "S_ERR"); break;
-
-            default:break;
-        }
         Show_time++;
         if(Show_time>1)
         {

@@ -8,6 +8,7 @@
  * 2020-06-20     35166       the first version
  */
 #include "ble.h"
+
 #define DBG_TAG "BLE"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
@@ -32,6 +33,8 @@ unsigned int BLE_RX_NUM_B=0;
 
 /* 用于定时签到 */
 static rt_timer_t Timer_sign;       //1s中断一次
+
+
 /*
  * 函数名：Serial_Buffer_clear()
  *功能：清空串口接收数组
@@ -74,9 +77,10 @@ void BLE_Send_NOAT(unsigned char *str,int size)
  * */
 void KEY_ENT_Function()
 {
-    Beep_Sound_1();
+    Beep_sta=BEEP_SOUND_ONE;
     Sign_sta=SIGN_STA_SIGN_START;         //开启签到
-    Sign_time_run=Sign_time_set;          //装载time运行时间
+    Sign_number=0;                        //初始化签到人数
+    Sign_time_run=Sign_time_set;          //初始化签到运行时间
     rt_pin_write(BLE_PIN_REST, PIN_HIGH); //开启BLE模块
     rt_timer_start(Timer_sign);           //开启签到定时器
 }
@@ -105,8 +109,12 @@ static void BLE_RXB_ANA()
     switch(Code)
     {
         case BLE_CODE_TIME:
-            Sign_time_set= BLE_RX_Buffer_B[2];
-            Sign_sta=SIGN_STA_SET_OK;
+            Sign_time_set = BLE_RX_Buffer_B[2];
+            Sign_sta = SIGN_STA_SET_OK;
+            break;
+        case BLE_CODE_BEEP_EN:
+            BEEP_EN = BLE_RX_Buffer_B[2];
+            Sign_sta = SIGN_STA_SET_OK;
             break;
 
         default: break;
